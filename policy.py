@@ -38,3 +38,41 @@ class QueuePolicy(Policy):
 
     def _score(self, car_id: int, time: int) -> np.array:
         return np.array(range(len(self.people)), dtype=np.float)
+
+
+class TakeOnePolicy(Policy):
+
+    def _score(self, car_id: int, time: int) -> np.array:
+        if self.cars[car_id].passengers.count(None) != 4:
+            return np.array([0 if personIdx == self.cars[car_id].passengers[0].id else np.inf for personIdx in range(len(self.people))])
+
+        closest_distance = np.inf
+        closest_person_idx = -1
+
+        for personIdx in range(len(self.people)):
+            if self.people[personIdx].where_to() is None:
+                continue
+            if self.distances[(self.cars[car_id].at, self.people[personIdx].where_to())] < closest_distance:
+                closest_distance = self.distances[(self.cars[car_id].at, self.people[personIdx].where_to())]
+                closest_person_idx = personIdx
+        return np.array([0 if personIdx == closest_person_idx else np.inf for personIdx in range(len(self.people))])
+
+
+class TakeUpTo4Policy(Policy):
+
+    def _score(self, car_id: int, time: int) -> np.array:
+        if self.cars[car_id].passengers.count(None) != 4:
+            return np.array([self.distances[(self.cars[car_id].at, self.people[personIdx].where_to())] if self.people[personIdx] in self.cars[car_id].passengers else np.inf for personIdx in range(len(self.people))])
+
+        closest_distances = [np.inf] * (4 if len(self.people) > 4 else len(self.people))
+        closest_person_indexes = [-1] * (4 if len(self.people) > 4 else len(self.people))
+
+        for personIdx in range(len(self.people)):
+            if self.people[personIdx].where_to() is None:
+                continue
+            if self.distances[(self.cars[car_id].at, self.people[personIdx].where_to())] < max(closest_distances):
+                index = closest_distances.index(max(closest_distances))
+                closest_distances[index] = self.distances[(self.cars[car_id].at, self.people[personIdx].where_to())]
+                closest_person_indexes[index] = personIdx
+        return np.array([closest_distances[closest_person_indexes.index(personIdx)] if personIdx in closest_person_indexes else np.inf for personIdx in range(len(self.people))])
+
