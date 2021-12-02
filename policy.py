@@ -92,6 +92,23 @@ class NearestSTPolicy(Policy):
                 score.append(np.inf)
         return np.array(score)
 
+
+class NearestSTWithTimePolicy(Policy):
+
+    def _score(self, car_id: int, time: int) -> np.array:
+        score = []
+        car_location = self.cars[car_id].at
+        for person in self.people:
+            if person.where_to() is not None:
+                wait_time = (time - person.time_init) if (time - person.time_init) > 0 else 1
+                if person.state == PersonState.waiting or person.state == PersonState.assigned:
+                    score.append((self.distances[(car_location, person.s)] + self.distances[(person.s, person.t)]) / (wait_time))
+                else:
+                    score.append((self.distances[(car_location, person.where_to())]) / (wait_time))
+            else:
+                score.append(np.inf)
+        return np.array(score)
+
 # class Nearest4Policy(Policy):
 #
 #     def get_all_permutations(self, ways_len):
