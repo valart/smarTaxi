@@ -76,3 +76,28 @@ class TakeUpTo4Policy(Policy):
                 closest_person_indexes[index] = personIdx
         return np.array([closest_distances[closest_person_indexes.index(personIdx)] if personIdx in closest_person_indexes else np.inf for personIdx in range(len(self.people))])
 
+   
+class RidingTimePolicy(Policy):
+    
+    def _score(self, car_id: int, time: int) -> np.array:
+        score = []
+        car_location = self.cars[car_id].at
+        for person in self.people:
+            if person.state == PersonState.riding:
+                ride_time = (time - person.time_start) if (time - person.time_start) > 0 else 1
+                score.append((self.distances[(car_location, person.where_to())]) / (ride_time))
+            else:
+                score.append(np.inf)
+        return np.array(score)
+
+class WeightedClosestPolicy(Policy):
+    
+    def _score(self, car_id: int, time: int) -> np.array:
+        score = []
+        car_loc = self.cars[car_id].at
+        for person in self.people:
+            if person.where_to() is not None:
+                score.append((self.distances[(car_loc,person.s)]+self.distances[(person.s,person.t)])*np.exp(-1/self.distances[(person.s,person.t)]))
+            else:
+                score.append(np.inf)
+        return np.array(score)
