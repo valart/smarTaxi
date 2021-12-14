@@ -5,7 +5,7 @@ We believe that the possibility of sharing a cab with other people can have a po
 on your pocket. The goal of this project was to explore several algorithms which could help in creating an 
 application for shared taxi rides and to compare their performance with each other.
 
-To run progam You have to execute `Environment.ipynb` (correct plots redering available [here](https://nbviewer.org/github/valart/smarTaxi/blob/main/Environment.ipynb)), which runs whole *virtual* environment. Before the start of 
+To run progam You have to execute `Environment.ipynb` (correct plots rendering available [here](https://nbviewer.org/github/valart/smarTaxi/blob/main/Environment.ipynb)), which runs whole *virtual* environment. Before the start of 
 simulation 10 taxi cabs and 2 persons are generated at random locations in the area.
 
 Also, in the project exists Policy class (`policy.py`), which is an abstract class. It is responsible for selecting clients in a certain period of time. The 
