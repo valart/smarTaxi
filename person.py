@@ -41,9 +41,9 @@ class Person:
     def stats(self):
         if self.state == PersonState.arrived:
             return pd.DataFrame({
-                'assigning': [self.time_assign - self.time_init],
-                'waiting': [self.time_start - self.time_assign],
-                'riding': [self.time_finish - self.time_start]
+                'assigning': [(self.time_assign - self.time_init) / 60],
+                'waiting': [(self.time_start - self.time_assign) / 60],
+                'riding': [(self.time_finish - self.time_start) / 60]
             }, index=[self.id])
 
     def __repr__(self):
