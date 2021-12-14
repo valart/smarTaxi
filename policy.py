@@ -81,6 +81,7 @@ class DiscountedNearestWithDistPolicy(Policy):
 
 
 class WeightedNearestWithDistPolicy(Policy):
+
     
     def _score(self, car_id: int, time: int) -> np.array:
         score = []
